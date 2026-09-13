@@ -81,7 +81,7 @@
     }
   },
   "chat": {
-    "respond": true,
+    "respond": false,
     "tpWhitelist": ["YourMinecraftUsername"]
   }
 }
