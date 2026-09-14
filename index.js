@@ -277,22 +277,52 @@ server.on('error', (err) => {
 const SELF_PING_INTERVAL = 2 * 60 * 1000;
 
 function startSelfPing() {
-  const hostUrl = process.env.RENDER_EXTERNAL_URL || process.env.RAILWAY_STATIC_URL;
-  if (!hostUrl) {
-    console.log('[KeepAlive] No host URL env var set - self-ping disabled (running locally)');
+  const publicDomain = process.env.RAILWAY_PUBLIC_DOMAIN;
+
+  if (!publicDomain) {
+    console.log('[KeepAlive] RAILWAY_PUBLIC_DOMAIN not set - self-ping disabled');
     return;
   }
-  setInterval(() => {
-    const protocol = hostUrl.startsWith('https') ? https : http;
 
-    protocol.get(`${hostUrl}/ping`, (res) => {
+  let pingUrl;
+
+  try {
+    pingUrl = new URL(
+      `https://${publicDomain}/ping`
+    );
+  } catch (err) {
+    console.log(`[KeepAlive] Invalid Railway public domain: ${publicDomain}`);
+    console.log(`[KeepAlive] Self-ping disabled: ${err.message}`);
+    return;
+  }
+
+  setInterval(() => {
+    const protocol = pingUrl.protocol === 'https:' ? https : http;
+
+    const request = protocol.get(pingUrl, (res) => {
       res.resume();
-    }).on('error', (err) => {
+
+      if (res.statusCode === 200) {
+        console.log('[KeepAlive] Self-ping OK');
+      } else {
+        console.log(`[KeepAlive] Self-ping returned HTTP ${res.statusCode}`);
+      }
+    });
+
+    request.on('error', (err) => {
       console.log(`[KeepAlive] Self-ping failed: ${err.message}`);
     });
+
+    request.setTimeout(10000, () => {
+      request.destroy();
+      console.log('[KeepAlive] Self-ping timed out');
+    });
+
   }, SELF_PING_INTERVAL);
+
   console.log('[KeepAlive] Self-ping started (every 2 min)');
 }
+
 
 startSelfPing();
 
