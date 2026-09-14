@@ -30,30 +30,27 @@
       "enabled": false,
       "repeat": false,
       "repeat-delay": 120,
-      "messages": [
-        "I'm a regular player",
-        "I like to play Minecraft!"
-      ]
+      "messages": []
     },
     "chat-log": true,
     "auto-reconnect": true,
-    "auto-reconnect-delay": 2000,
-    "max-reconnect-delay": 120000
+    "auto-reconnect-delay": 5000,
+    "max-reconnect-delay": 300000
   },
   "movement": {
     "enabled": true,
     "circle-walk": {
       "enabled": true,
-      "radius": 4,
-      "speed": 3000
+      "radius": 3,
+      "speed": 5000
     },
     "look-around": {
       "enabled": true,
-      "interval": 5000
+      "interval": 15000
     },
     "random-jump": {
       "enabled": true,
-      "interval": 10000
+      "interval": 30000
     }
   },
   "modules": {
