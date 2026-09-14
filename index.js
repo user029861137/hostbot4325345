@@ -274,7 +274,7 @@ server.on('error', (err) => {
   }
 });
 
-const SELF_PING_INTERVAL = 10 * 60 * 1000;
+const SELF_PING_INTERVAL = 2 * 60 * 1000;
 
 function startSelfPing() {
   const hostUrl = process.env.RENDER_EXTERNAL_URL || process.env.RAILWAY_STATIC_URL;
@@ -291,7 +291,7 @@ function startSelfPing() {
       console.log(`[KeepAlive] Self-ping failed: ${err.message}`);
     });
   }, SELF_PING_INTERVAL);
-  console.log('[KeepAlive] Self-ping started (every 10 min)');
+  console.log('[KeepAlive] Self-ping started (every 2 min)');
 }
 
 startSelfPing();
@@ -367,7 +367,8 @@ function createBot() {
       port: config.server.port,
       version: botVersion,
       hideErrors: false,
-      checkTimeoutInterval: 600000
+      keepAlive: true,
+      checkTimeoutInterval: 900000
     });
 
     bot.loadPlugin(pathfinder);
